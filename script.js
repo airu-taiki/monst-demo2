@@ -1,153 +1,168 @@
-
 const startBtn = document.getElementById('startBtn');
-const intro = document.getElementById('intro');
+const fakeLink = document.getElementById('fakeLink');
+const feed = document.getElementById('feed');
+const sequence = document.getElementById('sequence');
 const alertVideo = document.getElementById('alertVideo');
 const bgmVideo = document.getElementById('bgmVideo');
 const glitchVideo = document.getElementById('glitchVideo');
-const dolphinLayer = document.getElementById('dolphinLayer');
-const hud = document.getElementById('hud');
-const bossBlock = document.getElementById('bossBlock');
-const comboLabel = document.getElementById('comboLabel');
-const hitCounter = document.getElementById('hitCounter');
-const strikeShot = document.getElementById('strikeShot');
-const systemError = document.getElementById('systemError');
-const systemFailure = document.getElementById('systemFailure');
+const redFlash = document.getElementById('redFlash');
+const warningText = document.getElementById('warningText');
+const stageText = document.getElementById('stageText');
+const bossUI = document.getElementById('bossUI');
+const comboText = document.getElementById('comboText');
+const hitsText = document.getElementById('hitsText');
+const strikeText = document.getElementById('strikeText');
+const ssText = document.getElementById('ssText');
+const systemText = document.getElementById('systemText');
+const failureText = document.getElementById('failureText');
 const awareness = document.getElementById('awareness');
+const dolphinField = document.getElementById('dolphinField');
 
-let running = false;
-let hitValue = 1;
-let dolphinTimer = null;
+let started = false;
+let hitCount = 1;
+let timers = [];
 
-function show(el){ el.classList.remove('hidden'); }
-function hide(el){ el.classList.add('hidden'); }
-function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-
-function resetLayers() {
-  [alertVideo, bgmVideo, glitchVideo, hud, bossBlock, comboLabel, hitCounter, strikeShot, systemError, systemFailure, awareness]
-    .forEach(hide);
-  dolphinLayer.innerHTML = '';
+function show(el) { el.classList.remove('hidden'); }
+function hide(el) { el.classList.add('hidden'); }
+function later(ms, fn) {
+  const t = setTimeout(fn, ms);
+  timers.push(t);
 }
-
-function spawnDolphin(speed = 9000) {
-  const img = document.createElement('img');
-  img.src = 'assets/dolphin.png';
-  img.className = 'dolphin';
-
-  const fromLeft = Math.random() > 0.2;
-  const y = Math.random() * (window.innerHeight * 0.72) + 80;
-  const scale = 0.8 + Math.random() * 0.7;
-  const rot = -18 + Math.random() * 36;
-  img.style.top = `${y}px`;
-  img.style.transform = `scale(${fromLeft ? scale : -scale}, ${scale}) rotate(${rot}deg)`;
-  img.style.left = fromLeft ? '-22vw' : '110vw';
-
-  dolphinLayer.appendChild(img);
-
-  requestAnimationFrame(() => {
-    img.style.transition = `transform ${speed}ms linear, left ${speed}ms linear`;
-    img.style.left = fromLeft ? '120vw' : '-32vw';
-  });
-
-  setTimeout(() => img.remove(), speed + 350);
+function flashRed() {
+  redFlash.classList.remove('flash-anim');
+  void redFlash.offsetWidth;
+  redFlash.classList.add('flash-anim');
 }
-
-function startDolphins() {
-  spawnDolphin(12000);
-  setTimeout(() => spawnDolphin(7000), 1200);
-  setTimeout(() => spawnDolphin(6000), 1800);
-  setTimeout(() => {
-    dolphinTimer = setInterval(() => spawnDolphin(3200 + Math.random() * 1800), 240);
-  }, 2600);
+function shake() {
+  document.getElementById('app').classList.remove('shake');
+  void document.getElementById('app').offsetWidth;
+  document.getElementById('app').classList.add('shake');
 }
+function resetDolphins() { dolphinField.innerHTML = ''; }
+function spawnDolphin(count = 1, fast = false) {
+  for (let i = 0; i < count; i++) {
+    const img = document.createElement('img');
+    img.src = 'assets/dolphin.png';
+    img.className = 'dolphin';
+    const scale = 0.7 + Math.random() * 0.7;
+    const fromLeft = Math.random() > 0.2;
+    const top = 120 + Math.random() * (window.innerHeight * 0.65);
+    img.style.top = `${top}px`;
+    img.style.width = `${84 * scale}px`;
+    img.style.transform = `${fromLeft ? '' : 'scaleX(-1) '} rotate(${(-15 + Math.random() * 30).toFixed(1)}deg)`;
+    img.style.left = fromLeft ? '-140px' : '110%';
+    dolphinField.appendChild(img);
 
-function stopDolphins() {
-  if (dolphinTimer) clearInterval(dolphinTimer);
+    const duration = fast ? 1000 + Math.random() * 1200 : 2600 + Math.random() * 1800;
+    requestAnimationFrame(() => {
+      img.style.transition = `left ${duration}ms linear, top ${duration}ms linear`;
+      img.style.left = fromLeft ? '110%' : '-180px';
+      img.style.top = `${top + (-60 + Math.random() * 120)}px`;
+    });
+
+    setTimeout(() => img.remove(), duration + 150);
+  }
 }
-
-async function playGlitchFullscreen(duration = 2200) {
-  glitchVideo.currentTime = 0;
-  show(glitchVideo);
-  try { await glitchVideo.play(); } catch (e) {}
-  await wait(duration);
-  glitchVideo.pause();
-  hide(glitchVideo);
-}
-
-function animateHits(target, stepMin, stepMax, interval) {
-  return new Promise(resolve => {
-    const timer = setInterval(() => {
-      hitValue += Math.floor(Math.random() * (stepMax - stepMin + 1)) + stepMin;
-      hitCounter.textContent = `${hitValue} Hits${hitValue > 100 ? '!!!' : ''}`;
-      if (hitValue >= target) {
-        clearInterval(timer);
-        hitValue = target;
-        hitCounter.textContent = `${hitValue} Hits${hitValue > 100 ? '!!!' : ''}`;
-        resolve();
-      }
-    }, interval);
-  });
+function comboBurst() {
+  hitCount += Math.floor(2 + Math.random() * 8);
+  hitsText.textContent = `${hitCount} Hits`;
+  spawnDolphin(2, true);
 }
 
 async function startSequence() {
-  if (running) return;
-  running = true;
-  resetLayers();
-  hide(intro);
+  if (started) return;
+  started = true;
 
+  feed.classList.remove('active');
+  sequence.classList.add('active');
   show(alertVideo);
-  alertVideo.currentTime = 0;
-  try { await alertVideo.play(); } catch (e) {}
-  await wait(2200);
-  hide(alertVideo);
 
-  show(bgmVideo);
-  bgmVideo.currentTime = 0;
-  try { await bgmVideo.play(); } catch (e) {}
-  startDolphins();
+  try {
+    alertVideo.currentTime = 0;
+    await alertVideo.play();
+  } catch (e) {
+    console.warn('alert play blocked', e);
+  }
 
-  await wait(2200);
-  show(hud);
+  flashRed();
+  later(500, () => { show(warningText); shake(); });
+  later(2100, () => hide(warningText));
 
-  await wait(1300);
-  show(bossBlock);
+  later(3000, async () => {
+    hide(alertVideo);
+    try {
+      bgmVideo.currentTime = 0;
+      bgmVideo.play();
+    } catch (e) {}
+    spawnDolphin(1, false);
+  });
 
-  await wait(1800);
-  show(comboLabel);
-  show(hitCounter);
-  hitCounter.textContent = '1 Hits';
-  hitValue = 1;
-  await animateHits(98, 2, 7, 90);
+  later(4200, () => spawnDolphin(2, false));
+  later(5200, () => {
+    for (let i = 0; i < 10; i++) later(i * 140, () => spawnDolphin(1, true));
+  });
 
-  await wait(500);
-  show(strikeShot);
-  await animateHits(360, 20, 48, 95);
+  later(6800, () => {
+    show(glitchVideo);
+    glitchVideo.classList.add('glitch-on');
+  });
 
-  await wait(900);
-  hide(strikeShot);
-  show(systemError);
+  later(7600, () => show(stageText));
+  later(9300, () => hide(stageText));
 
-  await wait(1200);
-  hide(systemError);
-  show(systemFailure);
+  later(9800, () => {
+    show(bossUI);
+    flashRed();
+    shake();
+  });
 
-  await wait(700);
-  hide(systemFailure);
+  later(12000, () => {
+    show(comboText);
+    show(hitsText);
+    hitCount = 1;
+    hitsText.textContent = '1 Hits';
+    for (let i = 0; i < 18; i++) later(i * 120, comboBurst);
+  });
 
-  // Fullscreen glitch before awareness.
-  // object-fit: cover in CSS makes it fill the vertical frame,
-  // allowing left/right cropping as requested.
-  await playGlitchFullscreen(2200);
+  later(14600, () => {
+    show(strikeText);
+    shake();
+  });
 
-  stopDolphins();
-  hide(comboLabel);
-  hide(hitCounter);
-  hide(hud);
-  bgmVideo.pause();
-  hide(bgmVideo);
-  dolphinLayer.innerHTML = '';
+  later(15400, () => {
+    show(ssText);
+    for (let i = 0; i < 10; i++) {
+      later(i * 100, () => {
+        hitCount += Math.floor(18 + Math.random() * 28);
+        hitsText.textContent = `${hitCount} Hits!!!`;
+        spawnDolphin(3, true);
+        flashRed();
+      });
+    }
+  });
 
-  show(awareness);
-  running = false;
+  later(17600, () => {
+    hide(comboText);
+    hide(strikeText);
+    hide(ssText);
+    show(systemText);
+    shake();
+  });
+
+  later(19300, () => {
+    hide(systemText);
+    hide(bossUI);
+    hide(glitchVideo);
+    resetDolphins();
+    show(failureText);
+  });
+
+  later(21300, () => {
+    hide(failureText);
+    show(awareness);
+    try { bgmVideo.pause(); } catch (e) {}
+  });
 }
 
 startBtn.addEventListener('click', startSequence);
+fakeLink.addEventListener('click', startSequence);
