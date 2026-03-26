@@ -4,19 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Monst Security Demo</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
   <div id="app" class="phone-frame">
-    <video id="alertVideo" class="full-video hidden" playsinline preload="auto" src="assets/alert.mp4"></video>
-    <video id="bgmVideo" class="hidden" playsinline preload="auto" src="assets/bgm.mp4"></video>
-    <video id="glitchVideo" class="overlay-video hidden" playsinline preload="auto" muted loop src="assets/glitch.mov"></video>
+    <video id="alertVideo" class="full-video hidden" playsinline preload="auto">
+      <source src="assets/alert.mp4" type="video/mp4" />
+      <source src="assets/alert.mov" type="video/quicktime" />
+    </video>
+
+    <video id="bgmVideo" class="full-video hidden" playsinline preload="auto" loop>
+      <source src="assets/bgm.mp4" type="video/mp4" />
+      <source src="assets/bgm.mov" type="video/quicktime" />
+      <source src="assets/BGM.MOV" type="video/quicktime" />
+    </video>
+
+    <video id="glitchVideo" class="overlay-video hidden" playsinline preload="auto">
+      <source src="assets/glitch.mp4" type="video/mp4" />
+      <source src="assets/glitch.mov" type="video/quicktime" />
+      <source src="assets/グリッチ.MOV" type="video/quicktime" />
+    </video>
 
     <section id="feed" class="screen active">
       <div class="status-bar">
         <span>9:16 DEMO</span>
         <span>REC ●</span>
       </div>
+
       <div class="tabs">
         <span class="tab active">For You</span>
         <span class="tab">Following</span>
@@ -55,6 +69,7 @@
       <div id="redFlash" class="red-flash"></div>
       <div id="warningText" class="warning hidden">⚠ BOSS WARNING</div>
       <div id="stageText" class="stage hidden">STAGE START</div>
+
       <div id="bossUI" class="boss-ui hidden">
         <div class="hud-top">
           <div class="stage-label">STAGE 1</div>
@@ -63,6 +78,7 @@
             <div class="hp-bar"><div class="hp-fill"></div></div>
           </div>
         </div>
+
         <div class="boss-block">
           <div class="boss-name">BOSS：Mirai</div>
           <div class="boss-sub">BOTNET ALERT</div>
@@ -88,6 +104,6 @@
     </section>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
