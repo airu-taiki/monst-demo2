@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monst Security Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="phone-frame">
+    <video id="alertVideo" class="full-video hidden" playsinline preload="auto" src="assets/alert.mp4"></video>
+    <video id="bgmVideo" class="hidden" playsinline preload="auto" src="assets/bgm.mp4"></video>
+    <video id="glitchVideo" class="overlay-video hidden" playsinline preload="auto" muted loop src="assets/glitch.mov"></video>
+
+    <section id="feed" class="screen active">
+      <div class="status-bar">
+        <span>9:16 DEMO</span>
+        <span>REC ●</span>
+      </div>
+      <div class="tabs">
+        <span class="tab active">For You</span>
+        <span class="tab">Following</span>
+      </div>
+
+      <article class="post-card">
+        <div class="post-header">
+          <div class="avatar">M</div>
+          <div>
+            <div class="name">モンスト速報JP</div>
+            <div class="handle">@monst_event_info</div>
+          </div>
+        </div>
+
+        <div class="post-body">
+          <p>これ普通にヤバいw</p>
+          <p>無料でオーブ配布してるらしい</p>
+          <button id="fakeLink" class="fake-link">http://monst-free-orb.xyz</button>
+        </div>
+
+        <div class="post-meta">
+          <span>返信 12</span>
+          <span>RP 5</span>
+          <span>いいね 23</span>
+          <span>表示 1.2万</span>
+        </div>
+      </article>
+
+      <div class="hook-text">ほんとにそのリンク押していいの？</div>
+      <button id="startBtn" class="start-btn">演出スタート</button>
+      <p class="safe-note">安全な表示デモです。録画素材用。</p>
+    </section>
+
+    <section id="sequence" class="screen">
+      <div id="bgLayer" class="bg-layer"></div>
+      <div id="redFlash" class="red-flash"></div>
+      <div id="warningText" class="warning hidden">⚠ BOSS WARNING</div>
+      <div id="stageText" class="stage hidden">STAGE START</div>
+      <div id="bossUI" class="boss-ui hidden">
+        <div class="hud-top">
+          <div class="stage-label">STAGE 1</div>
+          <div class="hp-wrap">
+            <span>HP</span>
+            <div class="hp-bar"><div class="hp-fill"></div></div>
+          </div>
+        </div>
+        <div class="boss-block">
+          <div class="boss-name">BOSS：Mirai</div>
+          <div class="boss-sub">BOTNET ALERT</div>
+          <div class="boss-hp"><div class="boss-hp-fill"></div></div>
+        </div>
+      </div>
+
+      <div id="comboText" class="combo hidden">友情コンボ：イルカ乱舞</div>
+      <div id="hitsText" class="hits hidden">1 Hits</div>
+      <div id="strikeText" class="strike hidden">STRIKE SHOT</div>
+      <div id="ssText" class="ss hidden">SS：DISCLOSE FLICK</div>
+      <div id="systemText" class="system hidden">System Error</div>
+      <div id="failureText" class="failure hidden">System Failure</div>
+
+      <div id="awareness" class="awareness hidden">
+        <p>そのリンク、本当に安全ですか？</p>
+        <p class="emphasis">初期パスワード、変更していますか？</p>
+        <p class="sub">家のルーター、今すぐ確認してみて</p>
+        <p class="mini">※これは演出です</p>
+      </div>
+
+      <div id="dolphinField" class="dolphin-field"></div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
